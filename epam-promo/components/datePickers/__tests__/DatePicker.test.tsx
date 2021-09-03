@@ -77,16 +77,16 @@ describe('DataPicker', () => {
 
     it('should reset invalid value onBlur', () => {
         let baseValue = '2019-10-47';
-        let newState: any = { inputValue: baseValue, value: baseValue };
+        let newState = baseValue;
         wrapper = shallow(<DatePicker
-            value={ baseValue }
-            onValueChange={ (nV: any) => newState.value = nV }
+            value={ null }
+            onValueChange={ (nV: any) => newState = nV }
             format="MMM D, YYYY"
         />, {});
-
-        (wrapper.instance() as any).handleBlur('from');
-        expect(newState.value).toEqual(null);
-
+        const instance = (wrapper.instance() as any);
+        instance.handleInputChange(baseValue);
+        instance.handleBlur();
+        expect(newState).toEqual(null);
     });
 
     it('should set new value', () => {

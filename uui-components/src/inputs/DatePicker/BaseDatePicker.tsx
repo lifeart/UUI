@@ -1,10 +1,19 @@
 import * as React from 'react';
 import {
-    IEditable, IHasCX, IDisableable, IHasPlaceholder, ICanBeReadonly, IAnalyticableOnChange, UuiContexts, IDropdownToggler, UuiContext,
+    IEditable,
+    IHasCX,
+    IDisableable,
+    IHasPlaceholder,
+    ICanBeReadonly,
+    IAnalyticableOnChange,
+    UuiContexts,
+    IDropdownToggler,
+    UuiContext,
+    uuiMod,
 } from '@epam/uui';
 import dayjs, { Dayjs } from 'dayjs';
 import { PickerBodyValue, defaultFormat, valueFormat, ViewType } from '..';
-import { toValueDateFormat, toCustomDateFormat } from './helpers';
+import { toValueDateFormat, toCustomDateFormat, isDateInValid } from './helpers';
 import { Dropdown } from '../..';
 
 export interface BaseDatePickerProps extends IEditable<string | null>, IHasCX, IDisableable, IHasPlaceholder, ICanBeReadonly, IAnalyticableOnChange<string> {
@@ -72,8 +81,9 @@ export abstract class BaseDatePicker<TProps extends BaseDatePickerProps> extends
     }
 
     handleBlur = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const isValidDate = dayjs(this.state.inputValue, this.getFormat(), true).isValid();
-        const isValidFilter = this.props.filter && !this.props.filter(dayjs(this.state.inputValue, this.getFormat()));
+        if (!this.state.inputValue) return;
+        const isValidDate = !isDateInValid(this.state.inputValue);
+        const isValidFilter = this.props.filter ? this.props.filter(dayjs(this.state.inputValue, this.getFormat())) : true;
 
         if (!isValidDate || !isValidFilter) {
             this.handleValueChange(null);
@@ -83,7 +93,7 @@ export abstract class BaseDatePicker<TProps extends BaseDatePickerProps> extends
 
     handleInputChange = (value: string) => {
         const resultValue = toValueDateFormat(value, this.getFormat());
-        if (dayjs(value, this.getFormat(), true).isValid() && (!this.props.filter || this.props.filter(dayjs(value, this.getFormat())))) {
+        if (!isDateInValid(value) && (!this.props.filter || this.props.filter(dayjs(value, this.getFormat())))) {
             this.handleValueChange(resultValue);
             this.setState({ inputValue: value });
         } else {

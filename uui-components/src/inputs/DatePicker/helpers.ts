@@ -30,3 +30,5 @@ export const toCustomDateFormat = (value: string, format?: string): string => {
     return value ? dayjs(value).format(customFormat) : null;
 };
 
+export const isDateInValid = (day: string) => new Date(day).toString() === "Invalid Date";
+
