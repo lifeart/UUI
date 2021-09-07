@@ -14,7 +14,10 @@ export class ButtonBase<ButtonProps extends ButtonBaseProps> extends React.Compo
     }
 
     clickHandler = (e: any) => {
-        if (!isClickableChildClicked(e) && !this.props.isDisabled) {
+        if (this.props.isDisabled) {
+            e.preventDefault();
+        }
+        if (!isClickableChildClicked(e)) {
             if (this.props.onClick) {
                 this.props.onClick(e);
             }
@@ -30,8 +33,6 @@ export class ButtonBase<ButtonProps extends ButtonBaseProps> extends React.Compo
             }
 
             this.context.uuiAnalytics.sendEvent(this.props.clickAnalyticsEvent);
-        } else {
-            e.preventDefault();
         }
     }
 
